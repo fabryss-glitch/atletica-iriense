@@ -267,6 +267,49 @@ export async function pubblicaFoto(foto: FotoInAttesa[], avanzamento?: (n: numbe
   return fatte;
 }
 
+// ---------------------------------------------------------------
+// Messaggi del modulo contatti e iscritti alla newsletter
+// ---------------------------------------------------------------
+
+export type Messaggio = { id: string; nome: string; email: string; messaggio: string; created_at: string };
+export type Iscritto = { email: string; created_at: string };
+
+/** Messaggi e iscritti, dal più recente. */
+export async function caricaPosta(): Promise<{ messaggi: Messaggio[]; iscritti: Iscritto[] }> {
+  const db = supabaseBrowser();
+  const [m, n] = await Promise.all([
+    db.from('messaggi').select('id,nome,email,messaggio,created_at').order('created_at', { ascending: false }).limit(1000),
+    db.from('newsletter').select('email,created_at').order('created_at', { ascending: false }).limit(5000),
+  ]);
+  if (m.error) throw new Error(`Non riesco a leggere i messaggi: ${m.error.message}`);
+  if (n.error) throw new Error(`Non riesco a leggere gli iscritti: ${n.error.message}`);
+  return { messaggi: (m.data ?? []) as Messaggio[], iscritti: (n.data ?? []) as Iscritto[] };
+}
+
+export async function eliminaMessaggio(id: string): Promise<void> {
+  const { error } = await supabaseBrowser().from('messaggi').delete().eq('id', id);
+  if (error) throw new Error(`Eliminazione non riuscita: ${error.message}`);
+}
+
+/** Toglie un indirizzo dalla newsletter (richiesta di cancellazione). */
+export async function eliminaIscritto(email: string): Promise<void> {
+  const { error } = await supabaseBrowser().from('newsletter').delete().eq('email', email);
+  if (error) throw new Error(`Cancellazione non riuscita: ${error.message}`);
+}
+
+/** Scarica gli iscritti come CSV (per caricarli in un servizio di invio). */
+export function esportaIscritti(iscritti: Iscritto[]): void {
+  const righe = ['email,data_iscrizione', ...iscritti.map((i) => `${i.email},${i.created_at.slice(0, 10)}`)];
+  const blob = new Blob([righe.join('\n')], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `iscritti-newsletter-${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+
 /** Le foto caricate si eliminano; quelle degli articoli si nascondono soltanto. */
 export async function togliFoto(f: Foto): Promise<void> {
   const db = supabaseBrowser();

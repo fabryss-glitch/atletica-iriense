@@ -22,7 +22,8 @@ Elemento ricorrente: sei corsie verticali sottili (`components/Lanes.tsx`).
 ## Struttura
 - `app/(sito)/` pagine pubbliche: home, societa, corsi, risultati, risultati/[slug], gallery, contatti, regolamento, privacy
 - `app/admin/` + `components/admin/` area riservata (porting del pannello "Blog CMS" di Claude Design)
-- `app/azioni.ts` server actions: modulo contatti (tabella `messaggi`) e newsletter (tabella `newsletter`)
+- `app/azioni.ts` server actions: modulo contatti (tabella `messaggi`, più avviso email via Resend se c'è
+  `RESEND_API_KEY`) e newsletter (tabella `newsletter`); in `/admin` → Messaggi si leggono entrambi
 - `lib/supabase.ts` client, tipi, `slugify`, `normalizzaSlug`, `CATEGORIE`
 - `lib/contenuti.ts` letture lato server per le pagine pubbliche
 - `lib/admin.ts` operazioni dell'area riservata (solo browser)
@@ -45,6 +46,7 @@ Elemento ricorrente: sei corsie verticali sottili (`components/Lanes.tsx`).
 ## Variabili d'ambiente
 `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_SITE_URL` (Vercel).
 `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` solo per lo script di import, in locale.
+`RESEND_API_KEY` (facoltativa, solo server, su Vercel) per l'avviso email dei messaggi; `AVVISI_EMAIL`, `AVVISI_MITTENTE` facoltative.
 
 ## Comandi
 ```bash
@@ -65,4 +67,4 @@ node scripts/import-articoli.mjs data/articoli.json --dry-run
 - Far verificare `/privacy` alla società e aggiungere i dati fiscali del titolare.
 - Copiare su Supabase le foto degli articoli importati, ora ancora su iriense.wordpress.com (non cancellare il vecchio blog).
 - Newsletter: si raccolgono le email, manca un servizio di invio (es. Brevo o Resend).
-- Facoltativo: lettura di messaggi e iscritti dentro `/admin` (oggi solo da Supabase → Table Editor).
+- Avviso email dei messaggi: codice pronto, manca l'account Resend e `RESEND_API_KEY` su Vercel (vedi README).

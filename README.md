@@ -68,7 +68,21 @@ npm run dev                  # http://localhost:3000
 ## Dove si trovano i dati
 
 - **Articoli e foto della gallery**: Supabase (tabelle `articoli`, `gallery_foto`), foto nello spazio `articoli-foto`.
-- **Messaggi del modulo contatti e iscritti alla newsletter**: Supabase → Table Editor → `messaggi`, `newsletter`.
+- **Messaggi del modulo contatti e iscritti alla newsletter**: `/admin` → **Messaggi** (rispondi, elimina, copia o
+  scarica in CSV gli iscritti). Nel database sono le tabelle `messaggi` e `newsletter`.
+
+## Avviso email per i nuovi messaggi
+
+Facoltativo, gratuito fino a 3.000 email al mese. Senza, i messaggi si leggono comunque in `/admin`.
+
+1. Crea un account su [resend.com](https://resend.com) **con l'indirizzo che deve ricevere gli avvisi**
+   (es. `atleticairiense@gmail.com`): senza un dominio verificato, Resend invia solo a quell'indirizzo.
+2. **API Keys → Create API Key** (permesso *Sending access*), copiala.
+3. Su Vercel → **Settings → Environment Variables** aggiungi `RESEND_API_KEY` (non `NEXT_PUBLIC_`!), poi **Redeploy**.
+4. Facoltative: `AVVISI_EMAIL` (destinatario, predefinito `atleticairiense@gmail.com`) e `AVVISI_MITTENTE`
+   (serve un dominio verificato su Resend).
+
+Nell'email, **Rispondi** scrive direttamente a chi ha compilato il modulo.
 - **Tabellone dei record sociali**: `data/record.json` (modifica il file e ripubblica).
 - **Testi delle pagine** (storia, corsi, staff): direttamente nei file in `app/(sito)/`.
 

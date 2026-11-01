@@ -19,6 +19,7 @@ import ElencoArticoli from './ElencoArticoli';
 import Editor from './Editor';
 import ImportView from './ImportView';
 import GalleryAdmin from './GalleryAdmin';
+import MessaggiAdmin from './MessaggiAdmin';
 import { Conferma, Icone, Toast, type Avviso } from './ui';
 
 type Vista =
@@ -26,7 +27,8 @@ type Vista =
   | { tipo: 'editor'; bozza: Bozza }
   | { tipo: 'anteprima'; articolo: Articolo; ritorno: 'elenco' | 'editor'; bozza?: Bozza }
   | { tipo: 'import' }
-  | { tipo: 'gallery' };
+  | { tipo: 'gallery' }
+  | { tipo: 'messaggi' };
 
 const oggi = () => new Date().toISOString().slice(0, 10);
 const bozzaVuota = (): Bozza => ({ title: '', slug: '', date_iso: oggi(), category: CATEGORIE[0], excerpt: '', body: '', images: [], caption: '', caption2: '', published: true });
@@ -153,8 +155,9 @@ export default function AdminApp() {
         <nav className="adm-tabs" aria-label="Sezioni dell'area riservata">
           {dentro && (
             <>
-              <button className="adm-tab" aria-current={vista.tipo !== 'gallery' ? 'page' : undefined} onClick={() => vai({ tipo: 'elenco' })}>Articoli</button>
+              <button className="adm-tab" aria-current={vista.tipo !== 'gallery' && vista.tipo !== 'messaggi' ? 'page' : undefined} onClick={() => vai({ tipo: 'elenco' })}>Articoli</button>
               <button className="adm-tab" aria-current={vista.tipo === 'gallery' ? 'page' : undefined} onClick={() => vai({ tipo: 'gallery' })}>Gallery</button>
+              <button className="adm-tab" aria-current={vista.tipo === 'messaggi' ? 'page' : undefined} onClick={() => vai({ tipo: 'messaggi' })}>Messaggi</button>
             </>
           )}
           <Link href="/" className="adm-home">{Icone.casa} Torna al sito</Link>
@@ -256,6 +259,8 @@ export default function AdminApp() {
     );
   } else if (vista.tipo === 'import') {
     contenuto = <ImportView onIndietro={() => vai({ tipo: 'elenco' })} onFatto={() => ricarica()} />;
+  } else if (vista.tipo === 'messaggi') {
+    contenuto = <MessaggiAdmin avvisa={avvisa} />;
   } else if (vista.tipo === 'gallery') {
     contenuto = articoli ? <GalleryAdmin articoli={articoli} avvisa={avvisa} /> : <p style={{ padding: 60, textAlign: 'center' }}>Caricamento…</p>;
   } else {

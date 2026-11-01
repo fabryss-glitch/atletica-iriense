@@ -40,5 +40,34 @@ export async function inviaMessaggio(_prev: EsitoModulo, form: FormData): Promis
 
   const { error } = await supabaseServer().from('messaggi').insert({ nome, email, messaggio });
   if (error) return { ok: false, messaggio: 'Invio non riuscito, riprova o scrivici a atleticairiense@gmail.com.' };
+  await avvisaSegreteria(nome, email, messaggio);
   return { ok: true, messaggio: 'Messaggio inviato. Ti risponderemo il prima possibile.' };
+}
+
+/**
+ * Email di avviso alla segreteria per ogni nuovo messaggio, tramite Resend.
+ * Senza RESEND_API_KEY non fa nulla: il messaggio resta comunque salvato
+ * e si legge in /admin → Messaggi. Un errore di invio non blocca il modulo.
+ */
+async function avvisaSegreteria(nome: string, email: string, messaggio: string): Promise<void> {
+  const chiave = process.env.RESEND_API_KEY;
+  if (!chiave) return;
+  const sito = process.env.NEXT_PUBLIC_SITE_URL || 'https://atletica-iriense.vercel.app';
+  try {
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${chiave}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        from: process.env.AVVISI_MITTENTE || 'Sito Atletica Iriense <onboarding@resend.dev>',
+        to: [process.env.AVVISI_EMAIL || 'atleticairiense@gmail.com'],
+        reply_to: email, // "Rispondi" scrive direttamente a chi ha compilato il modulo
+        subject: `Nuovo messaggio dal sito: ${nome}`,
+        text: `${nome} <${email}> ha scritto dal modulo contatti:\n\n${messaggio}\n\n—\nRispondi a questa email per scrivere a ${nome}.\nTutti i messaggi: ${sito}/admin`,
+      }),
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!res.ok) console.error('Avviso email non inviato:', res.status, await res.text());
+  } catch (e) {
+    console.error('Avviso email non inviato:', e);
+  }
 }
