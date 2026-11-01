@@ -268,7 +268,22 @@ textarea.input { resize: vertical; line-height: 1.55; }
   border-radius: 3px; padding: 11px 16px; color: rgba(20, 22, 26, 0.7);
 }
 .anchors a:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+/* anteprima mappa (Contatti): ritagliata ai bordi per nascondere i comandi, scurita come la scheda */
+.map-preview { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.map-preview iframe {
+  /* spostata in alto: il segnaposto resta sopra il titolo anche su mobile */
+  position: absolute; top: -170px; left: -90px; width: calc(100% + 180px); height: calc(100% + 200px); border: 0;
+  filter: grayscale(1) invert(1) contrast(1.25) brightness(1.15);
+}
+.map-preview::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(20, 22, 26, 0.7) 0%, rgba(20, 22, 26, 0) 25%, rgba(20, 22, 26, 0.25) 50%, rgba(20, 22, 26, 0.95) 82%);
+}
+.map-preview__credit { position: absolute; right: 12px; bottom: 10px; font-size: 10px; color: rgba(255, 255, 255, 0.45); }
+.map-preview__credit:hover { color: #fff; }
 .sticky-side { position: sticky; top: 100px; }
+/* quando le colonne vanno a capo la colonna laterale coprirebbe il testo: niente aggancio */
+@media (max-width: 1099px) { .sticky-side { position: static; } }
 .values { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; font-weight: 600; font-size: 16px; }
 .archive-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); gap: 12px; margin-top: 14px; }
 .archive-strip figure { margin: 0; position: relative; border-radius: 6px; overflow: hidden; background: #2a2c30; aspect-ratio: 4 / 3; }

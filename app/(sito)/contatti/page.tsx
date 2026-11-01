@@ -8,6 +8,14 @@ export const metadata: Metadata = {
 
 const MAPPA = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('Campo Giovani, Via Luigi Barbieri 182, 27058 Voghera PV');
 
+// Anteprima da OpenStreetMap (nessun cookie di profilazione, a differenza di Google Maps).
+// Coordinate del Campo Giovani su OSM; la mappa non è interattiva, si apre col bottone.
+const CAMPO = { lat: 44.97489, lon: 8.9957 };
+const ANTEPRIMA_MAPPA =
+  'https://www.openstreetmap.org/export/embed.html?layer=mapnik' +
+  `&bbox=${CAMPO.lon - 0.009},${CAMPO.lat - 0.0045},${CAMPO.lon + 0.009},${CAMPO.lat + 0.0045}` +
+  `&marker=${CAMPO.lat},${CAMPO.lon}`;
+
 export default function ContattiPage() {
   return (
     <main>
@@ -62,7 +70,10 @@ export default function ContattiPage() {
           </div>
 
           <div style={{ flex: '1 1 min(100%,420px)', minWidth: 0 }}>
-            <div className="dark" style={{ height: 'clamp(300px,44vw,480px)', borderRadius: 6, padding: 30, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', position: 'relative', overflow: 'hidden' }}>
+            <div className="dark" style={{ height: 'clamp(440px,44vw,480px)', borderRadius: 6, padding: 30, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', position: 'relative', overflow: 'hidden' }}>
+              <div className="map-preview" aria-hidden="true">
+                <iframe src={ANTEPRIMA_MAPPA} title="Mappa del Campo Giovani" loading="lazy" tabIndex={-1} />
+              </div>
               <div aria-hidden="true" style={{ position: 'absolute', inset: 0, display: 'grid', gridTemplateColumns: 'repeat(6,1fr)', opacity: 0.5 }}>
                 {Array.from({ length: 6 }).map((_, i) => (
                   <span key={i} style={{ borderLeft: '1px solid rgba(255,255,255,.08)' }} />
@@ -80,6 +91,9 @@ export default function ContattiPage() {
                   Apri in Google Maps
                 </a>
               </div>
+              <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer" className="map-preview__credit">
+                © OpenStreetMap
+              </a>
             </div>
           </div>
         </div>

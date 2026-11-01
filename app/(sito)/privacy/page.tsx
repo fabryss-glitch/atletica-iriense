@@ -38,7 +38,8 @@ export default function PrivacyPage() {
             </p>
             <p>
               <b>Cookie.</b> Il sito non usa cookie di profilazione né strumenti di statistica di terze parti. L&apos;area riservata usa
-              solo la memoria tecnica del browser per mantenere l&apos;accesso della segreteria.
+              solo la memoria tecnica del browser per mantenere l&apos;accesso della segreteria. La mappa nella pagina Contatti è
+              caricata da OpenStreetMap, che riceve l&apos;indirizzo IP del visitatore ma non usa cookie di profilazione.
             </p>
             <p>
               <b>I tuoi diritti.</b> Puoi chiedere accesso, rettifica o cancellazione dei tuoi dati scrivendo a{' '}
