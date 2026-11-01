@@ -60,14 +60,23 @@ export default function GalleryAdmin({ articoli, avvisa }: { articoli: VoceElenc
   async function conferma() {
     setErrore('');
     setPubblicando(0);
+    let fatte = 0;
     try {
-      const n = await pubblicaFoto(attesa, setPubblicando);
+      const n = await pubblicaFoto(attesa, (k) => {
+        fatte = k;
+        setPubblicando(k);
+      });
       setAttesa([]);
       setFiltro('Tutte');
       setPagina(1);
       avvisa(n === 1 ? '1 foto pubblicata nella gallery.' : `${n} foto pubblicate nella gallery.`);
       ricarica();
     } catch (e) {
+      // le foto già pubblicate escono dall'anteprima, così riprovando non si duplicano
+      if (fatte) {
+        setAttesa((a) => a.slice(fatte));
+        ricarica();
+      }
       setErrore(e instanceof Error ? e.message : 'Pubblicazione non riuscita, riprova.');
     } finally {
       setPubblicando(null);

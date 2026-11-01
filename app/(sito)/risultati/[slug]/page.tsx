@@ -1,9 +1,10 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import ArticoloView from '@/components/ArticoloView';
 import PostCard from '@/components/PostCard';
 import { articoloDaSlug, articoliRecenti } from '@/lib/contenuti';
+import { normalizzaSlug } from '@/lib/supabase';
 
 // Le pagine si generano alla prima visita e si aggiornano ogni minuto:
 // un articolo appena pubblicato dall'area riservata compare entro 60 secondi.
@@ -29,7 +30,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function ArticoloPage({ params }: Props) {
   const { slug } = await params;
   const a = await articoloDaSlug(slug);
-  if (!a) notFound();
+  if (!a) {
+    // vecchi indirizzi con il trattino finale (22 articoli dell'archivio WordPress)
+    const pulito = normalizzaSlug(slug);
+    if (pulito && pulito !== slug) permanentRedirect(`/risultati/${pulito}`);
+    notFound();
+  }
 
   const altri = await articoliRecenti(3, a.slug);
   const sito = process.env.NEXT_PUBLIC_SITE_URL || 'https://atletica-iriense.vercel.app';

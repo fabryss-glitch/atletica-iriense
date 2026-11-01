@@ -86,6 +86,16 @@ export function normalizzaSlug(s: string, max = 120): string {
     .replace(/-+$/, '');
 }
 
+/**
+ * Slug mentre lo si scrive nel campo dell'editor: come normalizzaSlug, ma
+ * lascia il trattino finale, altrimenti non si riesce a digitare "a-b".
+ * Al salvataggio normalizzaSlug lo toglie.
+ */
+export function slugInScrittura(s: string): string {
+  const slug = normalizzaSlug(s);
+  return slug && /[^a-z0-9]$/i.test(s) ? `${slug}-` : slug;
+}
+
 /** Titolo → slug per l'URL, al massimo 70 caratteri. */
 export function slugify(s: string): string {
   return normalizzaSlug(s, 70);

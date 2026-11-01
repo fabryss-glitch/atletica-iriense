@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { CATEGORIE, labelFromIso, slugify } from '@/lib/supabase';
+import { CATEGORIE, labelFromIso, slugInScrittura, slugify } from '@/lib/supabase';
 import { caricaImmagine, type Bozza } from '@/lib/admin';
 import { Icone, Selettore } from './ui';
 
@@ -183,7 +183,7 @@ export default function Editor({ bozza, onIndietro, onSalva, onAnteprima }: Prop
                 <input
                   className="input mono"
                   value={d.slug ?? ''}
-                  onChange={(e) => aggiorna({ slug: slugify(e.target.value), slugToccato: true })}
+                  onChange={(e) => aggiorna({ slug: slugInScrittura(e.target.value), slugToccato: true })}
                   placeholder="si-genera-dal-titolo"
                   style={{ fontSize: 15 }}
                 />
